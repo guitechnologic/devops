@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
-  namespace: monitoring
+  namespace: observability
 spec:
   replicas: 1
   selector:
@@ -22,7 +22,12 @@ spec:
             - name: grafana-config
               mountPath: /etc/grafana/grafana.ini
               subPath: grafana.ini
+            - name: grafana-storage
+              mountPath: /var/lib/grafana
       volumes:
         - name: grafana-config
           configMap:
             name: grafana-config
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: grafana-pvc
