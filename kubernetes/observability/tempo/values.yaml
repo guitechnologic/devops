@@ -1,0 +1,41 @@
+deploymentMode: SingleBinary
+
+tempo:
+  auth_enabled: false
+
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo/traces
+
+  retention: 168h
+
+singleBinary:
+  replicas: 1
+
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: hostpath
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+# DESLIGAR TUDO EXTRA
+queryFrontend:
+  enabled: false
+
+compactor:
+  enabled: false
+
+metricsGenerator:
+  enabled: false
+
+distributor:
+  enabled: false
+
+ingester:
+  enabled: false
