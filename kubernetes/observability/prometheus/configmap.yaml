@@ -12,3 +12,11 @@ data:
       - job_name: 'kubernetes-nodes'
         kubernetes_sd_configs:
           - role: node
+          
+      - job_name: 'grafana'
+        static_configs:
+          - targets: ['grafana.observability.svc.cluster.local:3000']
+
+      - job_name: 'loki'
+        static_configs:
+          - targets: ['loki.observability.svc.cluster.local:3100']
