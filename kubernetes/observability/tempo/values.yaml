@@ -31,11 +31,16 @@ queryFrontend:
 compactor:
   enabled: false
 
-metricsGenerator:
-  enabled: false
-
 distributor:
   enabled: false
 
 ingester:
   enabled: false
+
+# Habilitar métricas HTTP para Prometheus
+metricsGenerator:
+  enabled: false
+
+metrics:
+  enabled: true
+  port: 9090

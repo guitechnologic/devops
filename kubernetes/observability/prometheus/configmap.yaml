@@ -23,6 +23,6 @@ data:
 
       - job_name: 'tempo'
         static_configs:
-          - targets: ['tempo.observability.svc.cluster.local:4317']
+          - targets: ['tempo.observability.svc.cluster.local:9090']
 
 
