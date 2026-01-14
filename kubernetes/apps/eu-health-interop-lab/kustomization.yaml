@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: eu-health-interop-lab
+
+resources:
+  - namespace.yaml
+  - pt-clinic/deployment.yaml
+  - eu-gateway/deployment.yaml
+  - de-registry/deployment.yaml

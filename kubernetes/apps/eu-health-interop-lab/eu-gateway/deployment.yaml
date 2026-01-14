@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eu-gateway
+  namespace: eu-health-interop-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eu-gateway
+  template:
+    metadata:
+      labels:
+        app: eu-gateway
+    spec:
+      containers:
+        - name: eu-gateway
+          image: eu-gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: eu-gateway
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability.svc.cluster.local:4317
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eu-gateway
+spec:
+  selector:
+    app: eu-gateway
+  ports:
+    - port: 8000
+      targetPort: 8000

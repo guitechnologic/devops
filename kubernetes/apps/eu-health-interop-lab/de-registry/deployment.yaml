@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: de-registry
+  namespace: eu-health-interop-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: de-registry
+  template:
+    metadata:
+      labels:
+        app: de-registry
+    spec:
+      containers:
+        - name: de-registry
+          image: de-registry:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: de-registry
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability.svc.cluster.local:4317
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: de-registry
+spec:
+  selector:
+    app: de-registry
+  ports:
+    - port: 8000
+      targetPort: 8000

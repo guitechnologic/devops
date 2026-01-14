@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pt-clinic
+  namespace: eu-health-interop-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pt-clinic
+  template:
+    metadata:
+      labels:
+        app: pt-clinic
+    spec:
+      containers:
+        - name: pt-clinic
+          image: pt-clinic:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: pt-clinic
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability.svc.cluster.local:4317
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pt-clinic
+spec:
+  selector:
+    app: pt-clinic
+  ports:
+    - port: 8000
+      targetPort: 8000
