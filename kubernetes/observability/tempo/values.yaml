@@ -26,16 +26,16 @@ singleBinary:
 
 # DESLIGAR TUDO EXTRA
 queryFrontend:
-  enabled: false
+  enabled: true
 
 compactor:
-  enabled: false
+  enabled: true
 
 distributor:
-  enabled: false
+  enabled: true
 
 ingester:
-  enabled: false
+  enabled: true
 
 # Habilitar métricas HTTP para Prometheus
 metricsGenerator:

@@ -30,7 +30,7 @@ alternateConfig:
     batch:
 
   exporters:
-    otlp:
+    otlp/tempo:
       endpoint: tempo.observability.svc.cluster.local:4317
       tls:
         insecure: true
@@ -42,4 +42,4 @@ alternateConfig:
       traces:
         receivers: [otlp]
         processors: [batch]
-        exporters: [otlp]
+        exporters: [otlp/tempo]

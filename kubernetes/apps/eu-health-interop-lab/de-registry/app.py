@@ -3,7 +3,11 @@ import random
 import time
 import logging
 
+from otel import setup_tracing
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+# --------- INIT ---------
+setup_tracing()
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("de-registry")
@@ -11,6 +15,7 @@ logger = logging.getLogger("de-registry")
 app = FastAPI(title="DE Health Registry")
 FastAPIInstrumentor.instrument_app(app)
 
+# --------- API ---------
 @app.post("/records")
 def records(data: dict):
     processing_time = random.uniform(0.5, 2.0)

@@ -20,15 +20,36 @@ spec:
           ports:
             - containerPort: 8000
           env:
+            # ---- SERVICE ----
             - name: OTEL_SERVICE_NAME
               value: pt-clinic
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://otel-collector.observability.svc.cluster.local:4317
+
+            # ---- TRACES ----
+            - name: OTEL_TRACES_EXPORTER
+              value: otlp
+
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: grpc
+
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: http://otel-collector-opentelemetry-collector.observability.svc.cluster.local:4317
+
+            # ---- DESABILITAR OUTROS EXPORTERS ----
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+
+            - name: OTEL_LOGS_EXPORTER
+              value: none
+
+            # ---- RESOURCE ATTRIBUTES ----
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.namespace=eu-health,service.version=1.0.0,deployment.environment=lab
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: pt-clinic
+  namespace: eu-health-interop-lab
 spec:
   selector:
     app: pt-clinic
