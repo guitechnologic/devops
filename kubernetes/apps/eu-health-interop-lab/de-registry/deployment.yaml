@@ -41,7 +41,7 @@ spec:
             - name: OTEL_LOGS_EXPORTER
               value: none
 
-            # ---- RESOURCE ATTRIBUTES ----
+            # ---- RESOURCE ATTRIBUTES -----
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.namespace=eu-health,service.version=1.0.0,deployment.environment=lab
 ---
