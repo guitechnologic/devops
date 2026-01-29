@@ -21,9 +21,12 @@ install:
 
 tests:
   stage: test
+  rules:
+    - exists:
+        - package.json
   script:
     - npm test
-  allow_failure: true
+
 
 kubernetes_dry_run:
   stage: k8s-validate
