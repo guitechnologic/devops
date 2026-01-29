@@ -32,5 +32,8 @@ kubernetes_dry_run:
     entrypoint: [""]
   script:
     - kubectl version --client
-    - kubectl apply --dry-run=client -f kubernetes/
+    - |
+      find kubernetes -type f \( -name "*.yml" -o -name "*.yaml" \) \
+      -exec kubectl apply --dry-run=client -f {} \;
+
 
