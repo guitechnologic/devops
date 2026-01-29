@@ -27,6 +27,10 @@ tests:
 
 kubernetes_dry_run:
   stage: k8s-validate
-  image: bitnami/kubectl:latest
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
   script:
+    - kubectl version --client
     - kubectl apply --dry-run=client -f kubernetes/
+
