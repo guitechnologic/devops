@@ -31,8 +31,7 @@ tests:
         echo "Nenhum script de teste definido no package.json — pulando testes"
       fi
 
-
-
+######
 kubernetes_dry_run:
   stage: k8s-validate
   image:
