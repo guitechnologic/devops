@@ -1,0 +1,32 @@
+image: node:20
+
+stages:
+  - install
+  - test
+  - k8s-validate
+
+cache:
+  key: node-modules
+  paths:
+    - node_modules/
+
+install:
+  stage: install
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1h
+
+tests:
+  stage: test
+  script:
+    - npm test
+  allow_failure: true
+
+kubernetes_dry_run:
+  stage: k8s-validate
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl apply --dry-run=client -f kubernetes/
