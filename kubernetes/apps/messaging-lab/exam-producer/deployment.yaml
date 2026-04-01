@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exam-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exam-producer
+  template:
+    metadata:
+      labels:
+        app: exam-producer
+    spec:
+      containers:
+        - name: exam-producer
+          image: exam-producer:latest
+          imagePullPolicy: IfNotPresent
+          

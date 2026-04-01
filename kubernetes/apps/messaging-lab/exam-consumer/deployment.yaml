@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exam-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exam-consumer
+  template:
+    metadata:
+      labels:
+        app: exam-consumer
+    spec:
+      containers:
+        - name: exam-consumer
+          image: exam-consumer:latest
+          imagePullPolicy: IfNotPresent
+          
