@@ -25,4 +25,17 @@ data:
         static_configs:
           - targets: ['tempo.observability.svc.cluster.local:9090']
 
+      - job_name: 'demo-app'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - eu-health-interop-lab
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: demo-app
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: http
 

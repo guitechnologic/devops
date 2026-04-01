@@ -24,6 +24,9 @@ spec:
               subPath: grafana.ini
             - name: grafana-storage
               mountPath: /var/lib/grafana
+            - name: grafana-alerts
+              mountPath: /etc/grafana/provisioning/alerting
+              subPath: alerting
       volumes:
         - name: grafana-config
           configMap:
@@ -31,3 +34,8 @@ spec:
         - name: grafana-storage
           persistentVolumeClaim:
             claimName: grafana-pvc
+        - name: grafana-alerts
+          hostPath:
+            path: /data/grafana-alerts
+            type: DirectoryOrCreate
+            
