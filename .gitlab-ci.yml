@@ -3,6 +3,8 @@ image: node:20
 stages:
   - install
   - test
+  - quality
+  - security
   - k8s-validate
 
 cache:
@@ -10,6 +12,9 @@ cache:
   paths:
     - node_modules/
 
+# -------------------------
+# INSTALL
+# -------------------------
 install:
   stage: install
   script:
@@ -19,19 +24,71 @@ install:
       - node_modules/
     expire_in: 1h
 
+# -------------------------
+# TESTS
+# -------------------------
 tests:
   stage: test
-  image: node:20
   script:
     - |
       if npm run | grep -q " test"; then
-        echo "Script de teste encontrado, rodando npm test"
         npm test
       else
-        echo "Nenhum script de teste definido no package.json — pulando testes"
+        echo "No tests found — skipping"
       fi
 
+# -------------------------
+# LINT (CODE QUALITY)
+# -------------------------
+eslint:
+  stage: quality
+  script:
+    - npx eslint . || true
 
+# -------------------------
+# DEPENDENCY VULNERABILITIES
+# -------------------------
+npm_audit:
+  stage: security
+  script:
+    - npm audit --audit-level=high || true
+
+# -------------------------
+# SECRET SCAN (HARD CODED TOKENS)
+# -------------------------
+gitleaks:
+  stage: security
+  image:
+    name: zricethezav/gitleaks:latest
+    entrypoint: [""]
+  script:
+    - gitleaks detect --source . --verbose --no-git || true
+
+# -------------------------
+# TRIVY FILESYSTEM SCAN
+# -------------------------
+trivy_fs:
+  stage: security
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy fs --severity HIGH,CRITICAL --exit-code 0 .
+
+# -------------------------
+# KUBERNETES LINT
+# -------------------------
+kube_linter:
+  stage: k8s-validate
+  image:
+    name: stackrox/kube-linter:latest
+    entrypoint: [""]
+  script:
+    - kube-linter lint kubernetes/
+
+# -------------------------
+# KUBERNETES DRY RUN
+# -------------------------
 kubernetes_dry_run:
   stage: k8s-validate
   image:
@@ -42,5 +99,3 @@ kubernetes_dry_run:
     - |
       find kubernetes -type f \( -name "*.yml" -o -name "*.yaml" \) \
       -exec kubectl apply --dry-run=client -f {} \;
-
-
