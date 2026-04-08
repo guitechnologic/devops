@@ -79,9 +79,9 @@ trivy_fs:
 # KUBERNETES LINT
 # -------------------------
 kube_linter:
-  stage: k8s-validate
+  stage: security
   image:
-    name: stackrox/kube-linter:latest
+    name: stackrox/kube-linter:v0.6.6
     entrypoint: [""]
   script:
     - kube-linter lint kubernetes/
