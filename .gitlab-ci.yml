@@ -70,7 +70,7 @@ gitleaks:
 trivy_fs:
   stage: security
   image:
-    name: aquasec/trivy:latest
+    name: aquasec/trivy:0.50.2
     entrypoint: [""]
   script:
     - trivy fs --severity HIGH,CRITICAL --exit-code 0 .
