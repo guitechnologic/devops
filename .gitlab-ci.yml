@@ -82,9 +82,9 @@ kube_linter:
   stage: security
   image:
     name: stackrox/kube-linter:v0.6.6
-    entrypoint: ["/kube-linter"]
+    entrypoint: [""]
   script:
-    - lint kubernetes/
+    - /kube-linter lint kubernetes/
 
 # -------------------------
 # KUBERNETES DRY RUN
