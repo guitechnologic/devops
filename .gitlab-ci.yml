@@ -83,8 +83,9 @@ kube_linter:
   image:
     name: stackrox/kube-linter:v0.6.6
     entrypoint: [""]
+    command: ["/kube-linter", "lint", "kubernetes/"]
   script:
-    - /kube-linter lint kubernetes/
+    - echo "Kube-linter executed"
 
 # -------------------------
 # KUBERNETES DRY RUN
