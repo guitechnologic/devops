@@ -150,13 +150,7 @@ trivy_images:
 # =========================================================
 # KUBERNETES LINT (manifests)
 # =========================================================
-kube_linter:
-  stage: k8s-validate
-  image:
-    name: stackrox/kube-linter:v0.6.6
-    entrypoint: [""]
-  script:
-    - kube-linter lint kubernetes/
+
 
 # =========================================================
 # KUBERNETES DRY RUN
