@@ -152,6 +152,43 @@ trivy_images:
 # =========================================================
 
 
+# -------------------------
+# BUILD DOCKER IMAGES
+# -------------------------
+docker_build_push:
+  stage: security
+  image: docker:25
+  services:
+    - docker:25-dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+
+  script:
+    - export TAG=$CI_COMMIT_SHORT_SHA
+
+    # demo-app
+    - docker build -t $CI_REGISTRY_IMAGE/demo-app:$TAG kubernetes/apps/demo-app
+    - docker push $CI_REGISTRY_IMAGE/demo-app:$TAG
+
+    # eu-health
+    - docker build -t $CI_REGISTRY_IMAGE/de-registry:$TAG kubernetes/apps/eu-health-interop-lab/de-registry
+    - docker push $CI_REGISTRY_IMAGE/de-registry:$TAG
+
+    - docker build -t $CI_REGISTRY_IMAGE/eu-gateway:$TAG kubernetes/apps/eu-health-interop-lab/eu-gateway
+    - docker push $CI_REGISTRY_IMAGE/eu-gateway:$TAG
+
+    - docker build -t $CI_REGISTRY_IMAGE/pt-clinic:$TAG kubernetes/apps/eu-health-interop-lab/pt-clinic
+    - docker push $CI_REGISTRY_IMAGE/pt-clinic:$TAG
+
+    # messaging
+    - docker build -t $CI_REGISTRY_IMAGE/exam-producer:$TAG kubernetes/apps/messaging-lab/exam-producer
+    - docker push $CI_REGISTRY_IMAGE/exam-producer:$TAG
+
+    - docker build -t $CI_REGISTRY_IMAGE/exam-consumer:$TAG kubernetes/apps/messaging-lab/exam-consumer
+    - docker push $CI_REGISTRY_IMAGE/exam-consumer:$TAG
+
 # =========================================================
 # KUBERNETES DRY RUN
 # =========================================================
