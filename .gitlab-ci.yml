@@ -196,6 +196,9 @@ kubernetes_validate:
   stage: k8s-validate
   image:
     name: ghcr.io/yannh/kubeconform:latest
-    entrypoint: [""]
+    entrypoint: ["/kubeconform"]
   script:
-    - kubeconform -summary -strict -ignore-missing-schemas $(find kubernetes -name "*.yaml" -o -name "*.yml")
+    - -summary
+    - -strict
+    - -ignore-missing-schemas
+    - kubernetes
