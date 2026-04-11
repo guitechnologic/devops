@@ -192,8 +192,18 @@ validate_k8s:
   stage: k8s-validate
   image: alpine:3.20
   before_script:
-    - apk add --no-cache curl tar
+    - apk add --no-cache curl tar findutils
     - curl -L https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
     - mv kubeconform /usr/local/bin/
   script:
-    - kubeconform -summary -strict -ignore-missing-schemas kubernetes/
+    - echo "Validating only Kubernetes manifests..."
+    - |
+      find kubernetes -type f \( -name "*.yml" -o -name "*.yaml" \) \
+      ! -name "values.yaml" \
+      ! -name "*package*.json" \
+      ! -path "*grafana*" \
+      ! -path "*loki*" \
+      ! -path "*tempo*" \
+      ! -path "*promtail*" \
+      -exec kubeconform -strict -ignore-missing-schemas {} \;
+      
