@@ -192,13 +192,10 @@ docker_build_push:
 # =========================================================
 # KUBERNETES DRY RUN
 # =========================================================
-kubernetes_validate:
-  stage: k8s-validate
+validate_k8s:
+  stage: test
   image:
     name: ghcr.io/yannh/kubeconform:latest
-    entrypoint: ["/kubeconform"]
+    entrypoint: [""]   # ⭐️ ESSENCIAL
   script:
-    - -summary
-    - -strict
-    - -ignore-missing-schemas
-    - kubernetes
+    - kubeconform -summary -strict -ignore-missing-schemas k8s/
