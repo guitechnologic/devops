@@ -6,9 +6,12 @@ stages:
   - quality
   - security
   - container-scan
+  - build
   - k8s-validate
 
-# Cache global
+# =========================================================
+# CACHE GLOBAL
+# =========================================================
 cache:
   paths:
     - node_modules/
@@ -51,7 +54,7 @@ eslint:
     - if [ -f package.json ]; then npx eslint . || true; fi
 
 # =========================================================
-# PYTHON LINT (para seus microservices)
+# PYTHON LINT
 # =========================================================
 flake8:
   stage: quality
@@ -90,7 +93,7 @@ gitleaks:
     - gitleaks detect --source . --verbose --no-git || true
 
 # =========================================================
-# TRIVY FILESYSTEM SCAN (repo inteiro)
+# TRIVY FILESYSTEM SCAN
 # =========================================================
 trivy_fs:
   stage: security
@@ -110,7 +113,7 @@ hadolint:
     - find . -name "Dockerfile" -exec hadolint {} \; || true
 
 # =========================================================
-# BUILD DAS IMAGENS (sem push)
+# BUILD DAS IMAGENS (VALIDAÇÃO)
 # =========================================================
 docker_build_test:
   stage: container-scan
@@ -120,15 +123,14 @@ docker_build_test:
   variables:
     DOCKER_TLS_CERTDIR: ""
   script:
-    - echo "Building all Dockerfiles just to validate..."
+    - echo "Building Dockerfiles just to validate..."
     - |
       for dockerfile in $(find . -name Dockerfile); do
-        echo "Building $dockerfile"
         docker build -f $dockerfile -t test-image $(dirname $dockerfile)
       done
 
 # =========================================================
-# SCAN DAS IMAGENS DOCKER
+# SCAN DAS IMAGENS
 # =========================================================
 trivy_images:
   stage: container-scan
@@ -148,15 +150,10 @@ trivy_images:
       done
 
 # =========================================================
-# KUBERNETES LINT (manifests)
+# BUILD + PUSH PARA GITLAB CONTAINER REGISTRY
 # =========================================================
-
-
-# -------------------------
-# BUILD DOCKER IMAGES
-# -------------------------
 docker_build_push:
-  stage: security
+  stage: build
   image: docker:25
   services:
     - docker:25-dind
@@ -164,7 +161,6 @@ docker_build_push:
     DOCKER_TLS_CERTDIR: ""
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-
   script:
     - export TAG=$CI_COMMIT_SHORT_SHA
 
@@ -190,12 +186,14 @@ docker_build_push:
     - docker push $CI_REGISTRY_IMAGE/exam-consumer:$TAG
 
 # =========================================================
-# KUBERNETES DRY RUN
+# VALIDAR MANIFESTS K8S (KUBECONFORM FIX)
 # =========================================================
 validate_k8s:
-  stage: test
-  image:
-    name: ghcr.io/yannh/kubeconform:latest
-    entrypoint: [""]   # ⭐️ ESSENCIAL
+  stage: k8s-validate
+  image: alpine:3.20
+  before_script:
+    - apk add --no-cache curl tar
+    - curl -L https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
+    - mv kubeconform /usr/local/bin/
   script:
-    - kubeconform -summary -strict -ignore-missing-schemas k8s/
+    - kubeconform -summary -strict -ignore-missing-schemas kubernetes/
