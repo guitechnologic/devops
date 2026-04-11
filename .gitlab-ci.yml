@@ -192,13 +192,10 @@ docker_build_push:
 # =========================================================
 # KUBERNETES DRY RUN
 # =========================================================
-kubernetes_dry_run:
+kubernetes_validate:
   stage: k8s-validate
   image:
-    name: bitnami/kubectl:latest
+    name: ghcr.io/yannh/kubeconform:latest
     entrypoint: [""]
   script:
-    - kubectl version --client
-    - |
-      find kubernetes -type f \( -name "*.yml" -o -name "*.yaml" \) \
-      -exec kubectl apply --dry-run=client -f {} \;
+    - kubeconform -summary -strict -ignore-missing-schemas $(find kubernetes -name "*.yaml" -o -name "*.yml")

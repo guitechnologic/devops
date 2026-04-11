@@ -1,0 +1,5 @@
+node_modules
+.gitlab-ci-local
+dist
+build
+.env
