@@ -2,13 +2,19 @@ apiVersion: v1
 kind: Service
 metadata:
   name: demo-app
-  namespace: eu-health-interop-lab
+  namespace: default
   labels:
     app: demo-app
+    metrics: "true"
 spec:
   selector:
     app: demo-app
+
   ports:
-    - port: 3000
-      targetPort: 3000
-      name: http
+    - name: http
+      port: 80
+      targetPort: 8080
+
+    - name: metrics
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,12 @@
+tempo:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+        http:
+
+  persistence:
+    enabled: false
+
+service:
+  type: ClusterIP

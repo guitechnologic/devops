@@ -2,31 +2,53 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: demo-app
-  namespace: eu-health-interop-lab
+  namespace: default
+  labels:
+    app: demo-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: demo-app
+
   template:
     metadata:
       labels:
         app: demo-app
+        metrics: "true"
+        logs: "true"
+        traces: "true"
+
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "3000"
+        prometheus.io/port: "8080"
         prometheus.io/path: "/metrics"
+
+        instrumentation.opentelemetry.io/inject-nodejs: "true"
+
     spec:
       containers:
         - name: demo-app
-          image: demo-app:1.0
-          imagePullPolicy: IfNotPresent
+          image: registry.gitlab.com/gui.technologic/devops:latest
+          imagePullPolicy: Always
+
           ports:
-            - containerPort: 3000
+            - name: http
+              containerPort: 8080
+            - name: metrics
+              containerPort: 8080
+
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability:4317
+
+            - name: OTEL_SERVICE_NAME
+              value: demo-app
+
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: 100m
+              memory: 128Mi
             limits:
-              cpu: "500m"
-              memory: "256Mi"
+              cpu: 500m
+              memory: 512Mi

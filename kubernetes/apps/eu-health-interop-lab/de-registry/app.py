@@ -14,6 +14,8 @@ logger = logging.getLogger("de-registry")
 
 app = FastAPI(title="DE Health Registry")
 FastAPIInstrumentor.instrument_app(app)
+from prometheus_fastapi_instrumentator import Instrumentator
+Instrumentator().instrument(app).expose(app)
 
 # --------- API ---------
 @app.post("/records")

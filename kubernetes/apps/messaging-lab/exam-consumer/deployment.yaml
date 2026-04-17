@@ -11,9 +11,27 @@ spec:
     metadata:
       labels:
         app: exam-consumer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
     spec:
       containers:
         - name: exam-consumer
           image: exam-consumer:latest
           imagePullPolicy: IfNotPresent
-          
+          ports:
+            - containerPort: 8000
+
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5

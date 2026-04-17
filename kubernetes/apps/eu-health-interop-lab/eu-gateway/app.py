@@ -16,6 +16,8 @@ logger = logging.getLogger("eu-gateway")
 app = FastAPI(title="EU Health Gateway")
 FastAPIInstrumentor.instrument_app(app)
 RequestsInstrumentor().instrument()
+from prometheus_fastapi_instrumentator import Instrumentator
+Instrumentator().instrument(app).expose(app)
 
 # --------- API ---------
 @app.post("/exchange")

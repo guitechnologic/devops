@@ -19,6 +19,8 @@ logger = logging.getLogger("pt-clinic")
 app = FastAPI(title="EU Health Interoperability Simulator")
 FastAPIInstrumentor.instrument_app(app)
 RequestsInstrumentor().instrument()
+from prometheus_fastapi_instrumentator import Instrumentator
+Instrumentator().instrument(app).expose(app)
 
 GATEWAY_URL = "http://eu-gateway:8000/exchange"
 
