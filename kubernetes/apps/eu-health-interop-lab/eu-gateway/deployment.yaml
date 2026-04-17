@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: eu-gateway
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: eu-gateway

@@ -9,33 +9,36 @@ data:
       scrape_interval: 15s
 
     scrape_configs:
-      - job_name: 'kubernetes-nodes'
+
+      - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
-          - role: node
-          
-      - job_name: 'grafana'
-        static_configs:
-          - targets: ['grafana.observability.svc.cluster.local:3000']
+          - role: pod
 
-      - job_name: 'loki'
-        static_configs:
-          - targets: ['loki.observability.svc.cluster.local:3100']
-
-      - job_name: 'tempo'
-        static_configs:
-          - targets: ['tempo.observability.svc.cluster.local:9090']
-
-      - job_name: 'demo-app'
-        kubernetes_sd_configs:
-          - role: endpoints
-            namespaces:
-              names:
-                - eu-health-interop-lab
         relabel_configs:
-          - source_labels: [__meta_kubernetes_service_name]
+          # só pods com annotation prometheus.io/scrape=true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
             action: keep
-            regex: demo-app
-          - source_labels: [__meta_kubernetes_endpoint_port_name]
-            action: keep
-            regex: http
+            regex: true
 
+          # path das métricas
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+
+          # porta das métricas
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+
+          # labels úteis
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
