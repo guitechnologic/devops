@@ -5,12 +5,12 @@ metadata:
   namespace: default
   labels:
     app: demo-app
+    metrics: "true"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: demo-app
-
   template:
     metadata:
       labels:

@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: de-registry
+        metrics: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
